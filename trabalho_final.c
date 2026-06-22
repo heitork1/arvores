@@ -29,108 +29,163 @@ int liberar_memoria(int **matriz, int linhas){
 //=================================================================================
 
 // ==============================================================================
-// Estruturas para a Árvore Rubro-Negra
+// Estruturas para a Árvore Rubro Negra
 // ==============================================================================
 
 /*
+// Atributo exclusivo das árvores rubro negra
 enum coloracao { Vermelho, Preto };
 typedef enum coloracao Cor;
 
-typedef struct no{
-    struct no* pai;
-    struct no* esquerda;
-    struct no* direita;
+// Eu nomeei esse no como no_rn para não interferir com as outras estruturas no futuro
+// no_RubroNegro -> no_rn
+
+typedef struct no_rn{
+    struct no_rn* pai;
+    struct no_rn* esquerda;
+    struct no_rn* direita;
     Cor cor; 
     int valor;
-} No;
+} No_rn;
 
+// Eu nomeei essa arvore como arvore_rn para não interferir com as outras estruturas no futuro
+// arvore_RubroNegro -> arvore_rn
 
-No new_no(int valor, No no){
-    if(no == NULL){
-        No* novo = malloc(sizeof(No));
-        novo->valor = valor;
-        novo->cor = Vermelho;
-        novo->esquerda = NULL;
-        novo->direita = NULL;
-        return *novo;
+typedef struct arvore_rn {
+    struct no_rn* raiz;
+} Arvore_rn;
+
+Arvore_rn* cria_rn() {
+    Arvore_rn *arvore_rn;
+    arvore_rn = malloc(sizeof(Arvore_rn));
+    arvore_rn->raiz = NULL;
+
+    return arvore_rn;
+}
+
+int vazia_rn(Arvore_rn* arvore_rn) {
+    return (arvore_rn->raiz == NULL);
+}
+
+No_rn* adiciona_rn(Arvore_rn* arvore_rn, No_rn* pai, float valor) {
+    No_rn *no_rn = malloc(sizeof(No_rn));
+    no_rn->pai = pai;
+    no_rn->esquerda = NULL;
+    no_rn->direita = NULL;
+    no_rn->valor = valor;
+
+    if (pai == NULL) {
+        arvore_rn->raiz = no_rn;
+    }
+    return no_rn;
+}
+
+void remove_rn(Arvore_rn* arvore_rn, No_rn* no_rn) {
+    if (no_rn->esquerda != NULL){
+        remove_rn(arvore_rn, no_rn->esquerda);
+    }
+    
+
+    if (no_rn->direita != NULL){
+        remove_rn(arvore_rn, no_rn->direita);
+    }
+    
+
+    if (no_rn->pai == NULL) {
+        arvore_rn->raiz = NULL;
+    } else {
+        if (no_rn->pai->esquerda == no_rn){
+            no_rn->pai->esquerda = NULL;
+        } else {
+            no_rn->pai->direita = NULL;
+        }
+    }
+    free(no_rn);
+}
+
+void percorrer_rn(No_rn* no_rn) {
+    if (no_rn != NULL) {
+        printf("%f", no_rn->valor);
+        percorrer_rn(no_rn->esquerda);
+        percorrer_rn(no_rn->direita);
     }
 }
 
-
-
-void balancear(Arvore* arvore, No* no) {
-    while (no->pai->cor == Vermelho) { //Garante que todos os níveis foram balanceados
-        if (no->pai == no->pai->pai->esquerda) {
-        No *tio = no->pai->pai->direita;
+void balancear_rn(Arvore_rn* arvore_rn, No_rn* no_rn) {
+    while (no_rn->pai->cor == Vermelho) { //Garante que todos os níveis foram balanceados
+        if (no_rn->pai == no_rn->pai->pai->esquerda) {
+        No_rn *tio = no_rn->pai->pai->direita;
 
         if (tio->cor == Vermelho) {
             tio->cor = Preto; //Resolve caso 2
-            no->pai->cor = Preto;
-            no->pai->pai->cor = Vermelho;
-            no = no->pai->pai; //Vai para o nível anterior
+            no_rn->pai->cor = Preto;
+            no_rn->pai->pai->cor = Vermelho;
+            no_rn = no_rn->pai->pai; //Vai para o nível anterior
             } else {
-            if (no == no->pai->direita) {
-            no = no->pai; //Vai para o nível anterior
-            rotacionarEsquerda(arvore, no); //Resolve caso 3
-            } else {
-            no->pai->cor = Preto; //Resolve caso 4
-            no->pai->pai->cor = Vermelho;
-            rotacionarDireita(arvore, no->pai->pai);
-            }
+                if (no_rn == no_rn->pai->direita) {
+                    no_rn = no_rn->pai; //Vai para o nível anterior
+                    rotacionarEsquerda(arvore_rn, no_rn); //Resolve caso 3
+                } else {
+                    no_rn->pai->cor = Preto; //Resolve caso 4
+                    no_rn->pai->pai->cor = Vermelho;
+                    rotacionarDireita(arvore_rn, no_rn->pai->pai);
+                }
             }
         } else {
             //Repete o mesmo código do bloco if, invertendo o lado dos direita e esquerda
         }
     }
-    arvore->raiz->cor = Preto; //Resolve caso 1
+    arvore_rn->raiz->cor = Preto; //Resolve caso 1
 }
 
 
-void rotacionarEsquerda(Arvore* arvore, No* no) {
-    No* direita = no->direita;
-    no->direita = direita->esquerda;
+void rotacionarEsquerda_rn(Arvore_rn* arvore_rn, No_rn* no_rn) {
+    No_rn* direita = no_rn->direita;
+    no_rn->direita = direita->esquerda;
     
-    if (direita->esquerda != arvore->nulo){
-        direita->esquerda->pai = no; //Se houver filho à esquerda em direita, ele será pai do nó
+    if (direita->esquerda != arvore_rn->nulo){
+        direita->esquerda->pai = no_rn; //Se houver filho à esquerda em direita, ele será pai do nó
     }
-    direita->pai = no->pai; //Ajusta no pai do nó à direita
+    direita->pai = no_rn->pai; //Ajusta no_rn pai do nó à direita
 
-    if (no->pai == arvore->nulo){
-        arvore->raiz = direita; //Se nó for raiz, o nó direita será a nova raiz da árvore
+    if (no_rn->pai == arvore_rn->nulo){
+        arvore_rn->raiz = direita; //Se nó for raiz, o nó direita será a nova raiz da árvore
     }
-    else if (no == no->pai->esquerda){
-        no->pai->esquerda = direita; //Corrige relação pai-filho do novo pai (esquerda)
+    else if (no_rn == no_rn->pai->esquerda){
+        no_rn->pai->esquerda = direita; //Corrige relação pai-filho do novo pai (esquerda)
     } else {
-        no->pai->direita = direita; //Corrige relação pai-filho do novo pai (direita)
+        no_rn->pai->direita = direita; //Corrige relação pai-filho do novo pai (direita)
     }
     
-    direita->esquerda = no; //Corrige relação pai-filho entre o nó pivô e o nó à direita
-    no->pai = direita;
+    direita->esquerda = no_rn; //Corrige relação pai-filho entre o nó pivô e o nó à direita
+    no_rn->pai = direita;
 }
 
-void rotacionarDireita(Arvore* arvore, No* no) {
-    No* esquerda = no->esquerda;
-    no->esquerda = esquerda>direita;
-    if (esquerda->direita != arvore->nulo){
-        esquerda->direita->pai = no; //Se houver filho à direita em esquerda, ele será pai do nó
+void rotacionarDireita_rn(Arvore_rn* arvore_rn, No_rn* no_rn) {
+    No_rn* esquerda = no_rn->esquerda;
+    no_rn->esquerda = esquerda>direita;
+    if (esquerda->direita != arvore_rn->nulo){
+        esquerda->direita->pai = no_rn; //Se houver filho à direita em esquerda, ele será pai do nó
     }
-    esquerda->pai = no->pai; //Ajusta no pai do nó à esquerda
+    esquerda->pai = no_rn->pai; //Ajusta no_rn pai do nó à esquerda
 
-    if (no->pai == arvore->nulo){
-        arvore->raiz = esquerda; //Se nó for raiz, o nó esquerda será a nova raiz da árvore
+    if (no_rn->pai == arvore_rn->nulo){
+        arvore_rn->raiz = esquerda; //Se nó for raiz, o nó esquerda será a nova raiz da árvore
     }
-    else if (no == no->pai->esquerda){
-        no->pai->esquerda = esquerda; //Corrige relação pai-filho do novo pai (esquerda)
+    else if (no_rn == no_rn->pai->esquerda){
+        no_rn->pai->esquerda = esquerda; //Corrige relação pai-filho do novo pai (esquerda)
     }
     else{
-        no->pai->direita = esquerda; //Corrige relação pai-filho do novo pai (direita)
+        no_rn->pai->direita = esquerda; //Corrige relação pai-filho do novo pai (direita)
     }
-    esquerda>direita = no; //Corrige relação pai-filho entre o nó pivô e o nó à esquerda
-    no->pai = esquerda;
+    esquerda->direita = no_rn; //Corrige relação pai-filho entre o nó pivô e o nó à esquerda
+    no_rn->pai = esquerda;
 }
+
 */
+
 //=================================================================================
-// Estruturas para a arvore B
+// Estruturas para a Árvore B
 //=================================================================================
 
 
@@ -140,8 +195,10 @@ int main (){
     int tamanho = 10000;
     int **amostra;
     amostra = aloca_matriz(10, tamanho);
-    
-    
+    int comparacoes = 0;
+
+    arvore_rn = cria_rn();
+
     
     //No tree;
     //tree = new_no(10, tree);

@@ -1,28 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
-int random_number(){
-    return (rand() % 10000) + 1;
-}
-
-int **aloca_matriz(int linhas, int colunas){
-    int **matriz;
-    matriz = malloc(linhas * sizeof(int*));
-
-    for(int i=0; i < linhas; i++){
-        matriz[i] = malloc(colunas * sizeof(int));
-    }
-    return matriz;
-}
-
-int liberar_memoria(int **matriz, int linhas){
-    for(int i=0; i < linhas;i++){
-        free(matriz[i]);
-    }
-    free(matriz);
-    return 0;
-}
+#include "includes/util.h"
 
 //=================================================================================
 // Estruturas para a Árvore AVL
@@ -191,13 +170,15 @@ void rotacionarDireita_rn(Arvore_rn* arvore_rn, No_rn* no_rn) {
 
 int main (){
     srand(time(NULL));
-
+    int rn_pronta = 0;
     int tamanho = 10000;
     int **amostra;
     amostra = aloca_matriz(10, tamanho);
     int comparacoes = 0;
 
-    arvore_rn = cria_rn();
+    if(rn_pronta){
+        //arvore_rn = cria_rn();
+    }
 
     
     //No tree;

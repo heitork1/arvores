@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "includes/util.h"
+#include "includes/avl.h"
 
 //=================================================================================
 // Estruturas para a Árvore AVL
@@ -171,10 +172,13 @@ void rotacionarDireita_rn(Arvore_rn* arvore_rn, No_rn* no_rn) {
 int main (){
     srand(time(NULL));
     int rn_pronta = 0;
+    int avl_pronta = 0;
     int tamanho = 10000;
-    int **amostra;
+    int **amostra, i, j;
     amostra = aloca_matriz(10, tamanho);
     int comparacoes = 0;
+    
+    preencheMatriz(amostra, tamanho);
 
     if(rn_pronta){
         //arvore_rn = cria_rn();
@@ -183,6 +187,9 @@ int main (){
     
     //No tree;
     //tree = new_no(10, tree);
+    if(avl_pronta){
+        inserirAmostrasNaAVL(amostra, tamanho);
+    }
     
 
     liberar_memoria(amostra, 10);

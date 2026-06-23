@@ -25,3 +25,11 @@ int liberar_memoria(int **matriz, int linhas){
     free(matriz);
     return 0;
 }
+
+void preencheMatriz(int **amostra, int tamanho){
+    for(int i=0; i<10; i++){
+        for(int j = 0; j < tamanho; j++){
+            amostra[i][j] = random_number();
+        }
+    }
+}

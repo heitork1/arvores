@@ -1,37 +1,36 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../includes/avl.h"
+#include <time.h>
 
-typedef struct No {
-    int valor;
-    int altura;
-    struct No *esquerda;
-    struct No *direita;
-} No;
 
 /* ===================== ALTURA ===================== */
 
-int altura(No *n) {
+int altura(No *n)
+{
     if (n == NULL)
         return -1;
 
     return n->altura;
 }
 
-int max(int a, int b) {
+int max(int a, int b)
+{
     return (a > b) ? a : b;
 }
 
-void atualizarAltura(No *n) {
-    if (n != NULL) {
+void atualizarAltura(No *n)
+{
+    if (n != NULL)
+    {
         n->altura = 1 + max(
-            altura(n->esquerda),
-            altura(n->direita)
-        );
+                            altura(n->esquerda),
+                            altura(n->direita));
     }
 }
 
-int fatorBalanceamento(No *n) {
+int fatorBalanceamento(No *n)
+{
     if (n == NULL)
         return 0;
 
@@ -40,8 +39,9 @@ int fatorBalanceamento(No *n) {
 
 /* ===================== CRIAÇÃO ===================== */
 
-No* criarNo(int valor) {
-    No *novo = (No*) malloc(sizeof(No));
+No *criarNo(int valor)
+{
+    No *novo = (No *)malloc(sizeof(No));
 
     novo->valor = valor;
     novo->altura = 0;
@@ -53,7 +53,8 @@ No* criarNo(int valor) {
 
 /* ===================== ROTAÇÕES ===================== */
 
-No* rotacaoDireita(No *y) {
+No *rotacaoDireita(No *y)
+{
     No *x = y->esquerda;
     No *T2 = x->direita;
 
@@ -66,7 +67,8 @@ No* rotacaoDireita(No *y) {
     return x;
 }
 
-No* rotacaoEsquerda(No *x) {
+No *rotacaoEsquerda(No *x)
+{
     No *y = x->direita;
     No *T2 = y->esquerda;
 
@@ -81,14 +83,16 @@ No* rotacaoEsquerda(No *x) {
 
 /* ===================== BALANCEAMENTO ===================== */
 
-No* balancear(No *n) {
+No *balancear(No *n)
+{
 
     atualizarAltura(n);
 
     int fb = fatorBalanceamento(n);
 
     /* Esquerda pesada */
-    if (fb > 1) {
+    if (fb > 1)
+    {
 
         /* Caso LL */
         if (fatorBalanceamento(n->esquerda) >= 0)
@@ -100,7 +104,8 @@ No* balancear(No *n) {
     }
 
     /* Direita pesada */
-    if (fb < -1) {
+    if (fb < -1)
+    {
 
         /* Caso RR */
         if (fatorBalanceamento(n->direita) <= 0)
@@ -116,7 +121,8 @@ No* balancear(No *n) {
 
 /* ===================== INSERÇÃO ===================== */
 
-No* inserir(No *raiz, int valor) {
+No *inserir(No *raiz, int valor)
+{
 
     if (raiz == NULL)
         return criarNo(valor);
@@ -133,9 +139,39 @@ No* inserir(No *raiz, int valor) {
     return balancear(raiz);
 }
 
+
+
+void inserirAmostrasNaAVL(int **amostra, int tamanho)
+{
+    double somaTempo = 0.0;
+    for (int i = 0; i < 10; i++)
+    {
+        No *raiz = NULL;
+
+        clock_t inicio = clock();
+        for (int j = 0; j < tamanho; j++)
+        {
+            raiz = inserir(raiz, amostra[i][j]);
+        }
+
+        clock_t fim = clock();
+
+        double tempo =
+            ((double)(fim - inicio)) / CLOCKS_PER_SEC;
+        printf("Tempo: %.6f segundos\n", tempo);
+        somaTempo += tempo;
+
+        destruir(raiz);
+    }
+    printf("\n====== MEDIAS ======\n");
+    printf("Media Tempo: %.6f segundos\n",
+       somaTempo / 10.0);
+}
+
 /* ===================== MENOR NÓ ===================== */
 
-No* menorNo(No *raiz) {
+No *menorNo(No *raiz)
+{
 
     No *atual = raiz;
 
@@ -147,27 +183,32 @@ No* menorNo(No *raiz) {
 
 /* ===================== REMOÇÃO ===================== */
 
-No* removerNo(No *raiz, int valor) {
+No *removerNo(No *raiz, int valor)
+{
 
     if (raiz == NULL)
         return NULL;
 
-    if (valor < raiz->valor) {
+    if (valor < raiz->valor)
+    {
 
         raiz->esquerda =
             removerNo(raiz->esquerda, valor);
-
-    } else if (valor > raiz->valor) {
+    }
+    else if (valor > raiz->valor)
+    {
 
         raiz->direita =
             removerNo(raiz->direita, valor);
-
-    } else {
+    }
+    else
+    {
 
         /* Encontrou */
 
         if (raiz->esquerda == NULL ||
-            raiz->direita == NULL) {
+            raiz->direita == NULL)
+        {
 
             No *temp;
 
@@ -191,16 +232,42 @@ No* removerNo(No *raiz, int valor) {
         raiz->direita =
             removerNo(
                 raiz->direita,
-                sucessor->valor
-            );
+                sucessor->valor);
     }
 
     return balancear(raiz);
 }
 
+void remocoesAmostrasNaAVL(int **amostra, int tamanho){
+    double somaTempo = 0.0;
+    for (int i = 0; i < 10; i++)
+    {
+        No *raiz = NULL;
+
+        clock_t inicio = clock();
+        for (int j = 0; j < tamanho; j++)
+        {
+            raiz = removerNo(raiz, amostra[i][j]);
+        }
+
+        clock_t fim = clock();
+
+        double tempo =
+            ((double)(fim - inicio)) / CLOCKS_PER_SEC;
+        printf("Tempo: %.6f segundos\n", tempo);
+        somaTempo += tempo;
+
+        destruir(raiz);
+    }
+    printf("\n====== MEDIAS ======\n");
+    printf("Media Tempo: %.6f segundos\n",
+       somaTempo / 10.0);
+}
+
 /* ===================== BUSCA ===================== */
 
-No* buscar(No *raiz, int valor) {
+No *buscar(No *raiz, int valor)
+{
 
     if (raiz == NULL)
         return NULL;
@@ -216,9 +283,11 @@ No* buscar(No *raiz, int valor) {
 
 /* ===================== PERCURSOS ===================== */
 
-void emOrdem(No *raiz) {
+void emOrdem(No *raiz)
+{
 
-    if (raiz != NULL) {
+    if (raiz != NULL)
+    {
 
         emOrdem(raiz->esquerda);
 
@@ -228,9 +297,11 @@ void emOrdem(No *raiz) {
     }
 }
 
-void preOrdem(No *raiz) {
+void preOrdem(No *raiz)
+{
 
-    if (raiz != NULL) {
+    if (raiz != NULL)
+    {
 
         printf("%d ", raiz->valor);
 
@@ -242,9 +313,11 @@ void preOrdem(No *raiz) {
 
 /* ===================== LIBERAR ===================== */
 
-void destruir(No *raiz) {
+void destruir(No *raiz)
+{
 
-    if (raiz != NULL) {
+    if (raiz != NULL)
+    {
 
         destruir(raiz->esquerda);
         destruir(raiz->direita);

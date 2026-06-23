@@ -13,6 +13,7 @@ void atualizarAltura(No *n);
 void emOrdem(No *raiz);
 void preOrdem(No *raiz);
 void destruir(No *raiz);
+void inserirAmostrasNaAVL(int **amostra, int tamanho);
 No* criarNo(int valor);
 No* rotacaoDireita(No *y);
 No* rotacaoEsquerda(No *x);

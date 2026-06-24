@@ -1,3 +1,7 @@
+#ifndef AVL_H
+#define AVL_H
+#include "resultados.h"
+
 typedef struct No {
     int valor;
     int altura;
@@ -13,7 +17,7 @@ void atualizarAltura(No *n);
 void emOrdem(No *raiz);
 void preOrdem(No *raiz);
 void destruir(No *raiz);
-void insercaoRemocaoAVL(int **amostra, int tamanho);
+ResultadoTeste insercaoRemocaoAVL(int **amostra, int tamanho);
 No* criarNo(int valor);
 No* rotacaoDireita(No *y);
 No* rotacaoEsquerda(No *x);
@@ -22,3 +26,5 @@ No* inserir(No *raiz, int valor);
 No* menorNo(No *raiz);
 No* removerNo(No *raiz, int valor);
 No* buscar(No *raiz, int valor);
+
+#endif

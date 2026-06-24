@@ -2,28 +2,35 @@
 #include <stdlib.h>
 #include "../includes/avl.h"
 #include <time.h>
+#include <windows.h>
 
+
+long long comparacoesInsercaoAVL = 0;
+long long comparacoesRemocaoAVL = 0;
 
 /* ===================== ALTURA ===================== */
 
 int altura(No *n)
 {
+    comparacoesInsercaoAVL++;
     if (n == NULL)
         return -1;
 
     return n->altura;
 }
 
-int max(int a, int b)
+int maior(int a, int b)
 {
+    comparacoesInsercaoAVL++;
     return (a > b) ? a : b;
 }
 
 void atualizarAltura(No *n)
 {
+    comparacoesInsercaoAVL++;
     if (n != NULL)
     {
-        n->altura = 1 + max(
+        n->altura = 1 + maior(
                             altura(n->esquerda),
                             altura(n->direita));
     }
@@ -31,6 +38,7 @@ void atualizarAltura(No *n)
 
 int fatorBalanceamento(No *n)
 {
+    comparacoesInsercaoAVL++;
     if (n == NULL)
         return 0;
 
@@ -90,10 +98,12 @@ No *balancear(No *n)
 
     int fb = fatorBalanceamento(n);
 
+    comparacoesInsercaoAVL++;
     /* Esquerda pesada */
     if (fb > 1)
     {
 
+        comparacoesInsercaoAVL++;
         /* Caso LL */
         if (fatorBalanceamento(n->esquerda) >= 0)
             return rotacaoDireita(n);
@@ -103,10 +113,12 @@ No *balancear(No *n)
         return rotacaoDireita(n);
     }
 
+    comparacoesInsercaoAVL++;
     /* Direita pesada */
     if (fb < -1)
     {
 
+        comparacoesInsercaoAVL++;
         /* Caso RR */
         if (fatorBalanceamento(n->direita) <= 0)
             return rotacaoEsquerda(n);
@@ -124,48 +136,25 @@ No *balancear(No *n)
 No *inserir(No *raiz, int valor)
 {
 
+    comparacoesInsercaoAVL ++;
     if (raiz == NULL)
         return criarNo(valor);
-
+        
+    comparacoesInsercaoAVL ++;
     if (valor < raiz->valor)
         raiz->esquerda = inserir(raiz->esquerda, valor);
 
-    else if (valor > raiz->valor)
-        raiz->direita = inserir(raiz->direita, valor);
 
-    else
-        return raiz; /* não permite repetidos */
+    else if (valor > raiz->valor){
+        raiz->direita = inserir(raiz->direita, valor);
+        comparacoesInsercaoAVL++;
+    }
+    else {
+        comparacoesInsercaoAVL++;
+        return raiz; 
+    }
 
     return balancear(raiz);
-}
-
-
-
-void inserirAmostrasNaAVL(int **amostra, int tamanho)
-{
-    double somaTempo = 0.0;
-    for (int i = 0; i < 10; i++)
-    {
-        No *raiz = NULL;
-
-        clock_t inicio = clock();
-        for (int j = 0; j < tamanho; j++)
-        {
-            raiz = inserir(raiz, amostra[i][j]);
-        }
-
-        clock_t fim = clock();
-
-        double tempo =
-            ((double)(fim - inicio)) / CLOCKS_PER_SEC;
-        printf("Tempo: %.6f segundos\n", tempo);
-        somaTempo += tempo;
-
-        destruir(raiz);
-    }
-    printf("\n====== MEDIAS ======\n");
-    printf("Media Tempo: %.6f segundos\n",
-       somaTempo / 10.0);
 }
 
 /* ===================== MENOR NÓ ===================== */
@@ -238,7 +227,8 @@ No *removerNo(No *raiz, int valor)
     return balancear(raiz);
 }
 
-void remocoesAmostrasNaAVL(int **amostra, int tamanho){
+void remocoesAmostrasNaAVL(int **amostra, int tamanho)
+{
     double somaTempo = 0.0;
     for (int i = 0; i < 10; i++)
     {
@@ -261,7 +251,7 @@ void remocoesAmostrasNaAVL(int **amostra, int tamanho){
     }
     printf("\n====== MEDIAS ======\n");
     printf("Media Tempo: %.6f segundos\n",
-       somaTempo / 10.0);
+           somaTempo / 10.0);
 }
 
 /* ===================== BUSCA ===================== */
@@ -324,4 +314,62 @@ void destruir(No *raiz)
 
         free(raiz);
     }
+}
+
+/* ====================== AMOSTRA ======================*/
+
+void insercaoRemocaoAVL(int **amostra, int tamanho)
+{
+    double somaTempoInsercao = 0.0;
+    double somaTempoRemocao = 0.0;
+
+    for (int i = 0; i < 10; i++)
+    {
+
+        No *raiz = NULL;
+        LARGE_INTEGER freqInsercao, inicioInsercao, fimInsercao;
+
+        QueryPerformanceFrequency(&freqInsercao);
+
+        QueryPerformanceCounter(&inicioInsercao);
+        for (int j = 0; j < tamanho; j++)
+        {
+            raiz = inserir(raiz, amostra[i][j]);
+        }
+
+        QueryPerformanceCounter(&fimInsercao);
+
+        double tempoInsercao = (double)(fimInsercao.QuadPart - inicioInsercao.QuadPart)
+    / freqInsercao.QuadPart;
+        somaTempoInsercao += tempoInsercao;
+
+
+        LARGE_INTEGER freqRemocao, inicioRemocao, fimRemocao;
+
+        QueryPerformanceFrequency(&freqRemocao);
+
+        QueryPerformanceCounter(&inicioRemocao);
+
+        for (int j = 0; j < tamanho; j++)
+        {
+            raiz = removerNo(raiz, amostra[i][j]);
+        }
+
+        
+        QueryPerformanceCounter(&fimRemocao);
+
+        double tempoRemocao = (double)(fimRemocao.QuadPart - inicioRemocao.QuadPart)
+    / freqRemocao.QuadPart;
+        somaTempoRemocao += tempoRemocao;
+
+        printf("Amostra %d\n", i + 1);
+        printf("Insercao: %.9f s\n", tempoInsercao);
+        printf("Remocao : %.9f s\n\n", tempoRemocao);
+        destruir(raiz);
+    }
+    printf("\n====== MEDIAS ======\n");
+    printf("Media Tempo Inserção: %.9f segundos\n",
+           somaTempoInsercao / 10.0);
+    printf("Media Tempo Remocao: %.9f s\n",
+           somaTempoRemocao / 10.0);
 }

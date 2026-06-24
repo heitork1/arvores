@@ -184,11 +184,10 @@ int main (){
         //arvore_rn = cria_rn();
     }
 
-    
     //No tree;
     //tree = new_no(10, tree);
     if(avl_pronta){
-        inserirAmostrasNaAVL(amostra, tamanho);
+        insercaoRemocaoAVL(amostra, tamanho);
     }
     
 

@@ -11,11 +11,9 @@ typedef struct No {
 
 
 int altura(No *n);
-int max(int a, int b);
+int maior(int a, int b);
 int fatorBalanceamento(No *n);
 void atualizarAltura(No *n);
-void emOrdem(No *raiz);
-void preOrdem(No *raiz);
 void destruir(No *raiz);
 ResultadoTeste insercaoRemocaoAVL(int **amostra, int tamanho);
 No* criarNo(int valor);
@@ -25,6 +23,5 @@ No* balancear(No *n);
 No* inserir(No *raiz, int valor);
 No* menorNo(No *raiz);
 No* removerNo(No *raiz, int valor);
-No* buscar(No *raiz, int valor);
 
 #endif

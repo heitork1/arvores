@@ -104,31 +104,25 @@ No *balancear(No *n)
     int fb = fatorBalanceamento(n);
 
     contadorAVL++;
-    /* Esquerda pesada */
     if (fb > 1)
     {
 
         contadorAVL++;
-        /* Caso LL */
         if (fatorBalanceamento(n->esquerda) >= 0)
             return rotacaoDireita(n);
 
-        /* Caso LR */
         n->esquerda = rotacaoEsquerda(n->esquerda);
         return rotacaoDireita(n);
     }
 
     contadorAVL++;
-    /* Direita pesada */
     if (fb < -1)
     {
 
         contadorAVL++;
-        /* Caso RR */
         if (fatorBalanceamento(n->direita) <= 0)
             return rotacaoEsquerda(n);
 
-        /* Caso RL */
         n->direita = rotacaoDireita(n->direita);
         return rotacaoEsquerda(n);
     }
@@ -204,7 +198,6 @@ No *removerNo(No *raiz, int valor)
     {
         contadorAVL++;
 
-        /* Encontrou */
 
         contadorAVL++;
         if (raiz->esquerda == NULL ||
@@ -224,7 +217,6 @@ No *removerNo(No *raiz, int valor)
             return temp;
         }
 
-        /* Dois filhos */
 
         No *sucessor =
             menorNo(raiz->direita);

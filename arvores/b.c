@@ -3,11 +3,11 @@
 #include <time.h>
 
 // --- ESTRUTURAS DE DADOS ---
-typedef struct no {
+typedef struct noB {
     int total;
     int* chaves;
-    struct no** filhos;
-    struct no* pai;
+    struct noB** filhos;
+    struct noB* pai;
 } No;
 
 typedef struct arvoreB {
@@ -20,21 +20,21 @@ typedef struct arvoreB {
 } ArvoreB;
 
 // --- PROTÓTIPOS ---
-No* criaNo(ArvoreB* arvore);
+No* criaNoB(ArvoreB* arvore);
 void balancearRemocao(ArvoreB* arvore, No* no);
 
 // --- FUNÇÕES DE CRIAÇÃO ---
-ArvoreB* criaArvore(int ordem) {
+ArvoreB* criaArvoreB(int ordem) {
     ArvoreB* a = (ArvoreB*) malloc(sizeof(ArvoreB));
     a->ordem = ordem;
     a->count_splits = 0;
     a->count_fusoes = 0;
     a->count_emprestimos = 0;
-    a->raiz = criaNo(a);
+    a->raiz = criaNoB(a);
     return a;
 }
 
-No* criaNo(ArvoreB* arvore) {
+No* criaNoB(ArvoreB* arvore) {
     int max = arvore->ordem * 2;
     No* no = (No*) malloc(sizeof(No));
     no->pai = NULL;
@@ -98,7 +98,7 @@ No* divideNo(ArvoreB* arvore, No* no) {
     arvore->count_splits++; // Incrementa contador de splits
     
     int meio = no->total / 2;
-    No* novo = criaNo(arvore);
+    No* novo = criaNoB(arvore);
     novo->pai = no->pai;
     
     for (int i = meio + 1; i < no->total; i++) {
@@ -123,7 +123,7 @@ void adicionaChaveRecursivo(ArvoreB* arvore, No* no, No* novo, int chave) {
         No* noDireita = divideNo(arvore, no);
         
         if (no->pai == NULL) {
-            No* raiz = criaNo(arvore);
+            No* raiz = criaNoB(arvore);
             raiz->filhos[0] = no;
             adicionaChaveNo(raiz, noDireita, promovido); 
             no->pai = raiz;
@@ -315,7 +315,7 @@ ResultadoB insercaoRemocaoB(int **amostras, int tamanho_amostra, int num_amostra
     
     // Itera sobre as 10 amostras pré-geradas na matriz
     for (int a = 0; a < num_amostras; a++) {
-        ArvoreB* arvore = criaArvore(ordem);
+        ArvoreB* arvore = criaArvoreB(ordem);
         
         // --- Loop de Inserção ---
         for (int i = 0; i < tamanho_amostra; i++) {

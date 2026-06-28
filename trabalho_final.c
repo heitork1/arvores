@@ -3,9 +3,11 @@
 #include <time.h>
 #include "includes/util.h"
 #include "includes/avl.h"
+#include "includes/b.h"
 
 int main (){
     srand(time(NULL));
+    
     int rn_pronta = 0;
     int avl_pronta = 1;
     int tamanho_maximo = 10000;
@@ -21,7 +23,7 @@ FILE *arquivo = fopen("resultados_arvores.csv", "w");
         return 1;
     }
 
-    fprintf(arquivo, "Tamanho,AVL_Ins,AVL_Rem,RN_Ins,RN_Rem,B1_Ins,B1_Rem,B2_Ins,B2_Rem,B3_Ins,B3_Rem\n");
+    fprintf(arquivo, "Tamanho, AVL_Ins, AVL_Rem, RN_Ins, RN_Rem, B1_Splits, B1_Fusoes, B1_Emp, B5_Splits, B5_Fusoes, B5_Emp, B10_Splits, B10_Fusoes, B10_Emp\n");
 
     int passo = tamanho_maximo / 10; 
     
@@ -32,7 +34,9 @@ FILE *arquivo = fopen("resultados_arvores.csv", "w");
 
         ResultadoTeste res_avl = {tam, 0, 0};
         ResultadoTeste res_rn = {tam, 0, 0};
-        ResultadoTeste res_b1 = {tam, 0, 0}, res_b2 = {tam, 0, 0}, res_b3 = {tam, 0, 0};
+        ResultadoB res_b1 = {tam, 0, 0, 0};
+        ResultadoB res_b5 = {tam, 0, 0, 0};
+        ResultadoB res_b10 = {tam, 0, 0, 0};
 
         if(avl_pronta) {
             res_avl = insercaoRemocaoAVL(amostra, tam);
@@ -41,13 +45,17 @@ FILE *arquivo = fopen("resultados_arvores.csv", "w");
         if(rn_pronta) {
         }
 
+        res_b1 = insercaoRemocaoB(amostra, tam, num_amostras, 1);
+        res_b5 = insercaoRemocaoB(amostra, tam, num_amostras, 5);
+        res_b10 = insercaoRemocaoB(amostra, tam, num_amostras, 10);
+
         fprintf(arquivo, "%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",
                 tam,
                 res_avl.mediaInsercao, res_avl.mediaRemocao,
                 res_rn.mediaInsercao, res_rn.mediaRemocao,
-                res_b1.mediaInsercao, res_b1.mediaRemocao,
-                res_b2.mediaInsercao, res_b2.mediaRemocao,
-                res_b3.mediaInsercao, res_b3.mediaRemocao);
+                res_b1.mediaSplits, res_b1.mediaFusoes, res_b1.mediaEmprestimos,
+                res_b5.mediaSplits, res_b5.mediaFusoes, res_b5.mediaEmprestimos,
+                res_b10.mediaSplits, res_b10.mediaFusoes, res_b10.mediaEmprestimos);
     }
 
     fclose(arquivo);

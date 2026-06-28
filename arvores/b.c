@@ -297,68 +297,48 @@ void liberaArvore(ArvoreB* arvore) {
     free(arvore);
 }
 
-//Resultados 
-int main() {
-    srand((unsigned int)time(NULL));
+// Estrutura específica para armazenar os resultados da Árvore B
+typedef struct {
+    int tamanho;
+    double mediaSplits;       // Ocorrem durante a inserção
+    double mediaFusoes;       // Ocorrem durante a remoção
+    double mediaEmprestimos;  // Ocorrem durante a remoção
+} ResultadoB;
+
+ResultadoB insercaoRemocaoB(int **amostras, int tamanho_amostra, int num_amostras, int ordem) {
+    ResultadoB resultado;
+    resultado.tamanho = tamanho_amostra;
     
-    int ordens[] = {1, 5, 10};
-    int num_chaves = 10000;
-    int num_amostras = 10;
+    long total_splits = 0;
+    long total_fusoes = 0;
+    long total_emprestimos = 0;
     
-    printf("=========================================================\n");
-    printf("        ARVORE B (%d, %d Chaves)\n", num_amostras, num_chaves);
-    printf("=========================================================\n\n");
-    
-    for (int o = 0; o < 3; o++) {
-        int ordem = ordens[o];
-        double tempo_insercao_total = 0.0;
-        double tempo_remocao_total = 0.0;
+    // Itera sobre as 10 amostras pré-geradas na matriz
+    for (int a = 0; a < num_amostras; a++) {
+        ArvoreB* arvore = criaArvore(ordem);
         
-        long total_splits = 0;
-        long total_fusoes = 0;
-        long total_emprestimos = 0;
-        
-        for (int a = 0; a < num_amostras; a++) {
-            ArvoreB* arvore = criaArvore(ordem);
-            
-            int* chaves_inserir = (int*) malloc(sizeof(int) * num_chaves);
-            for (int i = 0; i < num_chaves; i++) {
-                chaves_inserir[i] = rand(); 
-            }
-            
-            // Inserção
-            clock_t inicio = clock();
-            for (int i = 0; i < num_chaves; i++) {
-                adicionaChave(arvore, chaves_inserir[i]);
-            }
-            clock_t fim = clock();
-            tempo_insercao_total += ((double)(fim - inicio)) / CLOCKS_PER_SEC;
-            
-            // Remoção
-            inicio = clock();
-            for (int i = 0; i < num_chaves; i++) {
-                removerChave(arvore, chaves_inserir[i]);
-            }
-            fim = clock();
-            tempo_remocao_total += ((double)(fim - inicio)) / CLOCKS_PER_SEC;
-            
-            // Acumulando contadores
-            total_splits += arvore->count_splits;
-            total_fusoes += arvore->count_fusoes;
-            total_emprestimos += arvore->count_emprestimos;
-            
-            liberaArvore(arvore);
-            free(chaves_inserir);
+        // --- Loop de Inserção ---
+        for (int i = 0; i < tamanho_amostra; i++) {
+            adicionaChave(arvore, amostras[a][i]);
         }
         
-        printf("Ordem da Arvore (M) = %d\n", ordem);
-        printf(" -> Media de Splits (Divisoes): %ld vezes\n", total_splits / num_amostras);
-        printf(" -> Media de Fusoes (Merges):   %ld vezes\n", total_fusoes / num_amostras);
-        printf(" -> Media de Emprestimos:       %ld vezes\n", total_emprestimos / num_amostras);
-        printf(" -> Tempo Medio Insercao: %.5f segundos\n", tempo_insercao_total / num_amostras);
-        printf(" -> Tempo Medio Remocao:  %.5f segundos\n", tempo_remocao_total / num_amostras);
-        printf("---------------------------------------------------------\n");
+        // --- Loop de Remoção ---
+        for (int i = 0; i < tamanho_amostra; i++) {
+            removerChave(arvore, amostras[a][i]);
+        }
+        
+        // Coleta os contadores acumulados por esta árvore específica
+        total_splits += arvore->count_splits;
+        total_fusoes += arvore->count_fusoes;
+        total_emprestimos += arvore->count_emprestimos;
+        
+        liberaArvore(arvore);
     }
     
-    return 0;
+    // Calcula as médias das operações estruturais
+    resultado.mediaSplits = (double)total_splits / num_amostras;
+    resultado.mediaFusoes = (double)total_fusoes / num_amostras;
+    resultado.mediaEmprestimos = (double)total_emprestimos / num_amostras;
+    
+    return resultado;
 }

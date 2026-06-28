@@ -2,26 +2,26 @@
 #define AVL_H
 #include "resultados.h"
 
-typedef struct No {
+typedef struct NoAvl {
     int valor;
     int altura;
-    struct No *esquerda;
-    struct No *direita;
-} No;
+    struct NoAvl *esquerda;
+    struct NoAvl *direita;
+} NoAvl;
 
 
-int altura(No *n);
+int altura(NoAvl *n);
 int maior(int a, int b);
-int fatorBalanceamento(No *n);
-void atualizarAltura(No *n);
-void destruir(No *raiz);
+int fatorBalanceamento(NoAvl *n);
+void atualizarAltura(NoAvl *n);
+void destruir(NoAvl *raiz);
 ResultadoTeste insercaoRemocaoAVL(int **amostra, int tamanho);
-No* criarNo(int valor);
-No* rotacaoDireita(No *y);
-No* rotacaoEsquerda(No *x);
-No* balancear(No *n);
-No* inserir(No *raiz, int valor);
-No* menorNo(No *raiz);
-No* removerNo(No *raiz, int valor);
+NoAvl* criarNoAvl(int valor);
+NoAvl* rotacaoDireita(NoAvl *y);
+NoAvl* rotacaoEsquerda(NoAvl *x);
+NoAvl* balancear(NoAvl *n);
+NoAvl* inserir(NoAvl *raiz, int valor);
+NoAvl* menorNoAvl(NoAvl *raiz);
+NoAvl* removerNoAvl(NoAvl *raiz, int valor);
 
 #endif

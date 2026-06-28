@@ -15,7 +15,7 @@ typedef struct {
 
 /* ===================== ALTURA ===================== */
 
-int altura(No *n)
+int altura(NoAvl *n)
 {
     contadorAVL++;
     if (n == NULL)
@@ -30,7 +30,7 @@ int maior(int a, int b)
     return (a > b) ? a : b;
 }
 
-void atualizarAltura(No *n)
+void atualizarAltura(NoAvl *n)
 {
     contadorAVL++;
     if (n != NULL)
@@ -41,7 +41,7 @@ void atualizarAltura(No *n)
     }
 }
 
-int fatorBalanceamento(No *n)
+int fatorBalanceamento(NoAvl *n)
 {
     contadorAVL++;
     if (n == NULL)
@@ -52,9 +52,9 @@ int fatorBalanceamento(No *n)
 
 /* ===================== CRIAÇÃO ===================== */
 
-No *criarNo(int valor)
+NoAvl *criarNoAvl(int valor)
 {
-    No *novo = (No *)malloc(sizeof(No));
+    NoAvl *novo = (NoAvl *)malloc(sizeof(NoAvl));
 
     novo->valor = valor;
     novo->altura = 0;
@@ -66,10 +66,10 @@ No *criarNo(int valor)
 
 /* ===================== ROTAÇÕES ===================== */
 
-No *rotacaoDireita(No *y)
+NoAvl *rotacaoDireita(NoAvl *y)
 {
-    No *x = y->esquerda;
-    No *T2 = x->direita;
+    NoAvl *x = y->esquerda;
+    NoAvl *T2 = x->direita;
 
     x->direita = y;
     y->esquerda = T2;
@@ -80,10 +80,10 @@ No *rotacaoDireita(No *y)
     return x;
 }
 
-No *rotacaoEsquerda(No *x)
+NoAvl *rotacaoEsquerda(NoAvl *x)
 {
-    No *y = x->direita;
-    No *T2 = y->esquerda;
+    NoAvl *y = x->direita;
+    NoAvl *T2 = y->esquerda;
 
     y->esquerda = x;
     x->direita = T2;
@@ -96,7 +96,7 @@ No *rotacaoEsquerda(No *x)
 
 /* ===================== BALANCEAMENTO ===================== */
 
-No *balancear(No *n)
+NoAvl *balancear(NoAvl *n)
 {
 
     atualizarAltura(n);
@@ -132,12 +132,12 @@ No *balancear(No *n)
 
 /* ===================== INSERÇÃO ===================== */
 
-No *inserir(No *raiz, int valor)
+NoAvl *inserir(NoAvl *raiz, int valor)
 {
 
     contadorAVL++;
     if (raiz == NULL)
-        return criarNo(valor);
+        return criarNoAvl(valor);
         
     contadorAVL++;
     if (valor < raiz->valor)
@@ -158,10 +158,10 @@ No *inserir(No *raiz, int valor)
 
 /* ===================== MENOR NÓ ===================== */
 
-No *menorNo(No *raiz)
+NoAvl *menorNoAvl(NoAvl *raiz)
 {
 
-    No *atual = raiz;
+    NoAvl *atual = raiz;
     contadorAVL++;
     while (atual->esquerda != NULL){
         contadorAVL++;
@@ -174,7 +174,7 @@ No *menorNo(No *raiz)
 
 /* ===================== REMOÇÃO ===================== */
 
-No *removerNo(No *raiz, int valor)
+NoAvl *removerNoAvl(NoAvl *raiz, int valor)
 {
     
     contadorAVL++;
@@ -186,13 +186,13 @@ No *removerNo(No *raiz, int valor)
     {
 
         raiz->esquerda =
-            removerNo(raiz->esquerda, valor);
+            removerNoAvl(raiz->esquerda, valor);
     }
     else if (valor > raiz->valor)
     {
         contadorAVL++;
         raiz->direita =
-            removerNo(raiz->direita, valor);
+            removerNoAvl(raiz->direita, valor);
     }
     else
     {
@@ -204,7 +204,7 @@ No *removerNo(No *raiz, int valor)
             raiz->direita == NULL)
         {
 
-            No *temp;
+            NoAvl *temp;
 
             contadorAVL++;
             if (raiz->esquerda != NULL)
@@ -218,13 +218,13 @@ No *removerNo(No *raiz, int valor)
         }
 
 
-        No *sucessor =
-            menorNo(raiz->direita);
+        NoAvl *sucessor =
+            menorNoAvl(raiz->direita);
 
         raiz->valor = sucessor->valor;
 
         raiz->direita =
-            removerNo(
+            removerNoAvl(
                 raiz->direita,
                 sucessor->valor);
     }
@@ -234,7 +234,7 @@ No *removerNo(No *raiz, int valor)
 
 /* ===================== LIBERAR ===================== */
 
-void destruir(No *raiz)
+void destruir(NoAvl *raiz)
 {
 
     if (raiz != NULL)
@@ -256,7 +256,7 @@ ResultadoTeste insercaoRemocaoAVL(int **amostra, int tamanho)
     
     for (int i = 0; i < 10; i++)
     {
-        No *raiz = NULL;
+        NoAvl *raiz = NULL;
 
         contadorAVL = 0;
         for (int j = 0; j < tamanho; j++)
@@ -268,7 +268,7 @@ ResultadoTeste insercaoRemocaoAVL(int **amostra, int tamanho)
         contadorAVL = 0;
         for (int j = 0; j < tamanho; j++)
         {
-            raiz = removerNo(raiz, amostra[i][j]);
+            raiz = removerNoAvl(raiz, amostra[i][j]);
         }
         totalComparacoesRemocaoAVL += contadorAVL;
 

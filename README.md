@@ -42,3 +42,51 @@ No terminal, dentro da pasta do projeto, execute:
 
 ```bash
 py -m pip install pandas matplotlib
+```
+
+Depois, execute o script:
+```bash
+py gerar_graficos.py
+```
+
+Após a execução, será criada uma pasta chamada graficos, contendo os arquivos:
+
+1. grafico_adicao.png
+2. grafico_remocao.png
+
+## Resultados
+
+Os gráficos gerados apresentam o esforço computacional médio das operações de adição e remoção.
+
+Cada gráfico possui cinco linhas, representando:
+
+- AVL
+- Rubro-Negra
+- Árvore B de ordem 1, 5 e 10
+
+
+Foi utilizada escala logarítmica no eixo Y para facilitar a visualização das cinco estruturas no mesmo gráfico, pois os valores obtidos apresentaram diferenças grandes de magnitude.
+
+
+## Observação sobre as métricas
+
+É importante destacar que as métricas utilizadas não representam exatamente o mesmo tipo de contagem para todas as estruturas.
+
+Nas árvores AVL e rubro-negra, os valores estão mais relacionados às comparações e aos ajustes realizados durante as operações. Já na árvore B, foram consideradas operações estruturais específicas, como splits, fusões e empréstimos.
+
+Por esse motivo, os resultados devem ser interpretados como uma análise experimental das implementações utilizadas no trabalho, e não como uma comparação absoluta de desempenho entre todas as estruturas.
+
+## Conclusão
+
+A partir dos resultados obtidos, foi possível observar que o esforço computacional aumenta conforme cresce o tamanho do conjunto de dados. Esse comportamento apareceu tanto na operação de adição quanto na operação de remoção. Também foi possível perceber que as árvores B de maior ordem apresentaram menor quantidade de operações estruturais, principalmente por conseguirem armazenar mais chaves em cada nó. Já as árvores AVL e rubro-negra apresentaram valores maiores nas métricas utilizadas, o que pode estar relacionado à forma como o balanceamento e os contadores foram implementados.
+
+De forma geral, o trabalho permitiu visualizar na prática como diferentes árvores balanceadas se comportam durante operações de inserção e remoção.
+
+
+## Integrantes
+
+
+1. Guilherme Gamaliel
+2. Heitor Henrique Klein
+3. João Vitor Rulff
+4. Otávio Osni

@@ -5,7 +5,7 @@
 #include "includes/avl.h"
 #include "includes/b.h"
 
-//gcc arvores\avl.c arvores\b.c utilitarios\util.c trabalho_final.c -o trabalho_final.exe ;; .\trabalho_final.exe
+//gcc arvores\avl.c arvores\b.c arvores\rb.c utilitarios\util.c trabalho_final.c -o trabalho_final.exe ;; .\trabalho_final.exe
 
 int main (){
     srand(time(NULL));

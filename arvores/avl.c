@@ -7,17 +7,11 @@ long long comparacoesInsercaoAVL = 0;
 long long comparacoesRemocaoAVL = 0;
 long long contadorAVL = 0;
 
-typedef struct {
-    int tamanho;
-    double mediaInsercao;
-    double mediaRemocao;
-} ResultadoAVL;
 
 /* ===================== ALTURA ===================== */
 
 int altura(NoAvl *n)
 {
-    contadorAVL++;
     if (n == NULL)
         return -1;
 
@@ -26,13 +20,11 @@ int altura(NoAvl *n)
 
 int maior(int a, int b)
 {
-    contadorAVL++;
     return (a > b) ? a : b;
 }
 
 void atualizarAltura(NoAvl *n)
 {
-    contadorAVL++;
     if (n != NULL)
     {
         n->altura = 1 + maior(
@@ -43,7 +35,6 @@ void atualizarAltura(NoAvl *n)
 
 int fatorBalanceamento(NoAvl *n)
 {
-    contadorAVL++;
     if (n == NULL)
         return 0;
 
@@ -68,6 +59,8 @@ NoAvl *criarNoAvl(int valor)
 
 NoAvl *rotacaoDireita(NoAvl *y)
 {
+    contadorAVL++; 
+    
     NoAvl *x = y->esquerda;
     NoAvl *T2 = x->direita;
 
@@ -82,6 +75,8 @@ NoAvl *rotacaoDireita(NoAvl *y)
 
 NoAvl *rotacaoEsquerda(NoAvl *x)
 {
+    contadorAVL++; 
+    
     NoAvl *y = x->direita;
     NoAvl *T2 = y->esquerda;
 
@@ -98,16 +93,11 @@ NoAvl *rotacaoEsquerda(NoAvl *x)
 
 NoAvl *balancearAvl(NoAvl *n)
 {
-
     atualizarAltura(n);
-
     int fb = fatorBalanceamento(n);
 
-    contadorAVL++;
     if (fb > 1)
     {
-
-        contadorAVL++;
         if (fatorBalanceamento(n->esquerda) >= 0)
             return rotacaoDireita(n);
 
@@ -115,11 +105,8 @@ NoAvl *balancearAvl(NoAvl *n)
         return rotacaoDireita(n);
     }
 
-    contadorAVL++;
     if (fb < -1)
     {
-
-        contadorAVL++;
         if (fatorBalanceamento(n->direita) <= 0)
             return rotacaoEsquerda(n);
 
@@ -134,23 +121,21 @@ NoAvl *balancearAvl(NoAvl *n)
 
 NoAvl *inserir(NoAvl *raiz, int valor)
 {
-
-    contadorAVL++;
     if (raiz == NULL)
         return criarNoAvl(valor);
         
-    contadorAVL++;
-    if (valor < raiz->valor)
+    contadorAVL++; 
+    if (valor < raiz->valor) {
         raiz->esquerda = inserir(raiz->esquerda, valor);
-
-
-    else if (valor > raiz->valor){
-        raiz->direita = inserir(raiz->direita, valor);
-        contadorAVL++;
     }
     else {
-        contadorAVL++;
-        return raiz; 
+        contadorAVL++; 
+        if (valor > raiz->valor) {
+            raiz->direita = inserir(raiz->direita, valor);
+        }
+        else {
+            return raiz;
+        }
     }
 
     return balancearAvl(raiz);
@@ -160,15 +145,11 @@ NoAvl *inserir(NoAvl *raiz, int valor)
 
 NoAvl *menorNoAvl(NoAvl *raiz)
 {
-
     NoAvl *atual = raiz;
-    contadorAVL++;
     while (atual->esquerda != NULL){
-        contadorAVL++;
+        contadorAVL++; 
         atual = atual->esquerda;
     }
-        
-
     return atual;
 }
 
@@ -176,57 +157,39 @@ NoAvl *menorNoAvl(NoAvl *raiz)
 
 NoAvl *removerNoAvl(NoAvl *raiz, int valor)
 {
-    
-    contadorAVL++;
     if (raiz == NULL)
         return NULL;
 
-    contadorAVL++;
+    contadorAVL++; 
     if (valor < raiz->valor)
     {
-
-        raiz->esquerda =
-            removerNoAvl(raiz->esquerda, valor);
+        raiz->esquerda = removerNoAvl(raiz->esquerda, valor);
     }
-    else if (valor > raiz->valor)
+    else 
     {
-        contadorAVL++;
-        raiz->direita =
-            removerNoAvl(raiz->direita, valor);
-    }
-    else
-    {
-        contadorAVL++;
-
-
-        contadorAVL++;
-        if (raiz->esquerda == NULL ||
-            raiz->direita == NULL)
+        contadorAVL++; 
+        if (valor > raiz->valor)
         {
-
-            NoAvl *temp;
-
-            contadorAVL++;
-            if (raiz->esquerda != NULL)
-                temp = raiz->esquerda;
-            else
-                temp = raiz->direita;
-
-            free(raiz);
-
-            return temp;
+            raiz->direita = removerNoAvl(raiz->direita, valor);
         }
+        else
+        {
+            if (raiz->esquerda == NULL || raiz->direita == NULL)
+            {
+                NoAvl *temp;
+                if (raiz->esquerda != NULL)
+                    temp = raiz->esquerda;
+                else
+                    temp = raiz->direita;
 
+                free(raiz);
+                return temp;
+            }
 
-        NoAvl *sucessor =
-            menorNoAvl(raiz->direita);
-
-        raiz->valor = sucessor->valor;
-
-        raiz->direita =
-            removerNoAvl(
-                raiz->direita,
-                sucessor->valor);
+            NoAvl *sucessor = menorNoAvl(raiz->direita);
+            raiz->valor = sucessor->valor;
+            raiz->direita = removerNoAvl(raiz->direita, sucessor->valor);
+        }
     }
 
     return balancearAvl(raiz);
@@ -236,16 +199,14 @@ NoAvl *removerNoAvl(NoAvl *raiz, int valor)
 
 void destruir(NoAvl *raiz)
 {
-
     if (raiz != NULL)
     {
-
         destruir(raiz->esquerda);
         destruir(raiz->direita);
-
         free(raiz);
     }
 }
+
 
 /* ====================== AMOSTRA ======================*/
 

@@ -35,8 +35,8 @@ No_RB *adiciona(Arvore *arvore, int valor);
 void transplantar(Arvore *arvore, No_RB *u, No_RB *v);
 No_RB *busca(Arvore *arvore, int valor);
 void percorrer(Arvore *arvore, No_RB *no_RB);
-void remove_no_RB(Arvore *arvore, No_RB *z);
-void liberar_no_RBs(Arvore *arvore, No_RB *no_RB);
+void remove_no(Arvore *arvore, No_RB *z);
+void liberar_nos(Arvore *arvore, No_RB *no_RB);
 void liberar(Arvore *arvore);
 ResultadoRB insercaoRemocaoRB(int **amostra, int tamanho);
 

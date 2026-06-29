@@ -232,7 +232,7 @@ void balancear_remocao(Arvore *arvore, No_RB *no_RB) {
     no_RB->cor = Preto;
 }
 
-void remove_no_RB(Arvore *arvore, No_RB *z) {
+void remove_no(Arvore *arvore, No_RB *z) {
     No_RB *y = z;
     No_RB *x;
     Cor cor_original_y = y->cor;
@@ -296,16 +296,16 @@ void percorrer(Arvore *arvore, No_RB *no_RB) {
     }
 }
 
-void liberar_no_RBs(Arvore *arvore, No_RB *no_RB) {
+void liberar_nos(Arvore *arvore, No_RB *no_RB) {
     if (no_RB != arvore->nulo) {
-        liberar_no_RBs(arvore, no_RB->esquerda);
-        liberar_no_RBs(arvore, no_RB->direita);
+        liberar_nos(arvore, no_RB->esquerda);
+        liberar_nos(arvore, no_RB->direita);
         free(no_RB);
     }
 }
 
 void liberar(Arvore *arvore) {
-    liberar_no_RBs(arvore, arvore->raiz);
+    liberar_nos(arvore, arvore->raiz);
     free(arvore->nulo);
     free(arvore);
 }
@@ -334,7 +334,7 @@ ResultadoRB insercaoRemocaoRB(int **amostra, int tamanho) {
         for (int j = 0; j < tamanho; j++) {
             No_RB *alvo = busca(arvore, amostra[i][j]);
             if (alvo)
-                remove_no_RB(arvore, alvo);
+                remove_no(arvore, alvo);
         }
         totalComparacoesRemocaoRB += contadorRB;
 

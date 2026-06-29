@@ -11,8 +11,6 @@
 int main (){
     srand(time(NULL));
     
-    int rn_pronta = 0;
-    int avl_pronta = 1;
     int tamanho_maximo = 10000;
     int num_amostras = 10;
     int **amostra, i, j;
@@ -41,13 +39,11 @@ FILE *arquivo = fopen("resultados_arvores.csv", "w");
         ResultadoB res_b5 = {tam, 0, 0, 0};
         ResultadoB res_b10 = {tam, 0, 0, 0};
 
-        if(avl_pronta) {
-            res_avl = insercaoRemocaoAVL(amostra, tam);
-        }
+        
+        res_avl = insercaoRemocaoAVL(amostra, tam);
 
-        if(rn_pronta) {
-            res_rn = insercaoRemocaoRB(amostra, tam);
-        }
+        res_rn = insercaoRemocaoRB(amostra, tam);
+    
 
         res_b1 = insercaoRemocaoB(amostra, tam, num_amostras, 1);
         res_b5 = insercaoRemocaoB(amostra, tam, num_amostras, 5);

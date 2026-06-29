@@ -19,7 +19,7 @@ ResultadoTeste insercaoRemocaoAVL(int **amostra, int tamanho);
 NoAvl* criarNoAvl(int valor);
 NoAvl* rotacaoDireita(NoAvl *y);
 NoAvl* rotacaoEsquerda(NoAvl *x);
-NoAvl* balancear(NoAvl *n);
+NoAvl* balancearAvl(NoAvl *n);
 NoAvl* inserir(NoAvl *raiz, int valor);
 NoAvl* menorNoAvl(NoAvl *raiz);
 NoAvl* removerNoAvl(NoAvl *raiz, int valor);

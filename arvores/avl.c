@@ -96,7 +96,7 @@ NoAvl *rotacaoEsquerda(NoAvl *x)
 
 /* ===================== BALANCEAMENTO ===================== */
 
-NoAvl *balancear(NoAvl *n)
+NoAvl *balancearAvl(NoAvl *n)
 {
 
     atualizarAltura(n);
@@ -153,7 +153,7 @@ NoAvl *inserir(NoAvl *raiz, int valor)
         return raiz; 
     }
 
-    return balancear(raiz);
+    return balancearAvl(raiz);
 }
 
 /* ===================== MENOR NÓ ===================== */
@@ -229,7 +229,7 @@ NoAvl *removerNoAvl(NoAvl *raiz, int valor)
                 sucessor->valor);
     }
 
-    return balancear(raiz);
+    return balancearAvl(raiz);
 }
 
 /* ===================== LIBERAR ===================== */

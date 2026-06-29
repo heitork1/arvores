@@ -33,7 +33,6 @@ Arvore *cria();
 int vazia(Arvore *arvore);
 No *adiciona(Arvore *arvore, int valor);
 void transplantar(Arvore *arvore, No *u, No *v);
-void remove(Arvore *arvore, No *z);
 No *busca(Arvore *arvore, int valor);
 void percorrer(Arvore *arvore, No *no);
 void liberar_nos(Arvore *arvore, No *no);

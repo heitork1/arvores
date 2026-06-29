@@ -49,7 +49,7 @@ FILE *arquivo = fopen("resultados_arvores.csv", "w");
         res_b5 = insercaoRemocaoB(amostra, tam, num_amostras, 5);
         res_b10 = insercaoRemocaoB(amostra, tam, num_amostras, 10);
 
-        fprintf(arquivo, "%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f%.2f,%.2f,%.2f\n",
+        fprintf(arquivo, "%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",
                 tam,
                 res_avl.mediaInsercao, res_avl.mediaRemocao,
                 res_rn.mediaInsercao, res_rn.mediaRemocao,

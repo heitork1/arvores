@@ -4,6 +4,7 @@
 #include "includes/util.h"
 #include "includes/avl.h"
 #include "includes/b.h"
+#include "includes/rb.h"
 
 //gcc arvores\avl.c arvores\b.c arvores\rb.c utilitarios\util.c trabalho_final.c -o trabalho_final.exe ;; .\trabalho_final.exe
 
@@ -35,7 +36,7 @@ FILE *arquivo = fopen("resultados_arvores.csv", "w");
         printf("\n--- Testando tamanho: %d ---\n", tam);
 
         ResultadoTeste res_avl = {tam, 0, 0};
-        ResultadoTeste res_rn = {tam, 0, 0};
+        ResultadoRB res_rn = {tam, 0, 0};
         ResultadoB res_b1 = {tam, 0, 0, 0};
         ResultadoB res_b5 = {tam, 0, 0, 0};
         ResultadoB res_b10 = {tam, 0, 0, 0};
@@ -45,6 +46,7 @@ FILE *arquivo = fopen("resultados_arvores.csv", "w");
         }
 
         if(rn_pronta) {
+            res_rn = insercaoRemocaoRB(amostra, tam);
         }
 
         res_b1 = insercaoRemocaoB(amostra, tam, num_amostras, 1);

@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Definições de tipo
+int contadorRB = 0;
+long long totalComparacoesInsercaoRB = 0;
+long long totalComparacoesRemocaoRB  = 0;
+
+// Estruturas do código 
 
 enum coloracao { Vermelho, Preto };
 typedef enum coloracao Cor;
@@ -16,43 +20,35 @@ typedef struct no {
 
 typedef struct arvore {
     struct no *raiz;
-    struct no *nulo; // sentinela: nó folha universal (sempre Preto)
+    struct no *nulo;
 } Arvore;
 
-
-// Protótipos (necessários pois balancear chama as rotações 
-// antes delas serem definidas no arquivo original)
+// Protótipos
 
 void rotacionarEsquerda(Arvore *arvore, No *no);
 void rotacionarDireita(Arvore *arvore, No *no);
 void balancear(Arvore *arvore, No *no);
 void balancear_remocao(Arvore *arvore, No *no);
 void transplantar(Arvore *arvore, No *u, No *v);
-No *minimo(Arvore *arvore, No *no);
+No  *minimo(Arvore *arvore, No *no);
 
-// Criação da árvore
+// Criação
 
 Arvore *cria() {
     Arvore *arvore = malloc(sizeof(Arvore));
-
     arvore->nulo = malloc(sizeof(No));
     arvore->nulo->cor = Preto;
     arvore->nulo->esquerda = arvore->nulo;
     arvore->nulo->direita = arvore->nulo;
     arvore->nulo->pai = arvore->nulo;
     arvore->nulo->valor = 0;
-
     arvore->raiz = arvore->nulo;
     return arvore;
 }
 
-// Verifica se a árvore está vazia
-
 int vazia(Arvore *arvore) {
     return (arvore->raiz == arvore->nulo);
 }
-
-// Rotação à esquerda
 
 void rotacionarEsquerda(Arvore *arvore, No *no) {
     No *direita = no->direita;
@@ -74,8 +70,6 @@ void rotacionarEsquerda(Arvore *arvore, No *no) {
     no->pai = direita;
 }
 
-// Rotação à direita
-
 void rotacionarDireita(Arvore *arvore, No *no) {
     No *esquerda = no->esquerda;
     no->esquerda = esquerda->direita;
@@ -96,73 +90,59 @@ void rotacionarDireita(Arvore *arvore, No *no) {
     no->pai = esquerda;
 }
 
-// Balanceamento pós-inserção
-
 void balancear(Arvore *arvore, No *no) {
     while (no->pai != arvore->nulo && no->pai->cor == Vermelho) {
-
         if (no->pai == no->pai->pai->esquerda) {
-            // Pai é filho ESQUERDO do avô
             No *tio = no->pai->pai->direita;
-
             if (tio->cor == Vermelho) {
-                // Caso 2 — tio vermelho: recolorir e subir
                 tio->cor = Preto;
                 no->pai->cor = Preto;
                 no->pai->pai->cor = Vermelho;
                 no = no->pai->pai;
             } else {
                 if (no == no->pai->direita) {
-                    // Caso 3 — nó é filho direito: rotação à esquerda no pai
                     no = no->pai;
                     rotacionarEsquerda(arvore, no);
                 }
-                // Caso 4 — nó é filho esquerdo: rotação à direita no avô
                 no->pai->cor = Preto;
                 no->pai->pai->cor = Vermelho;
                 rotacionarDireita(arvore, no->pai->pai);
             }
         } else {
-            // Pai é filho DIREITO do avô (caso simétrico)
             No *tio = no->pai->pai->esquerda;
-
             if (tio->cor == Vermelho) {
-                // Caso 2 simétrico
                 tio->cor = Preto;
                 no->pai->cor = Preto;
                 no->pai->pai->cor = Vermelho;
                 no = no->pai->pai;
             } else {
                 if (no == no->pai->esquerda) {
-                    // Caso 3 simétrico
                     no = no->pai;
                     rotacionarDireita(arvore, no);
                 }
-                // Caso 4 simétrico
                 no->pai->cor      = Preto;
                 no->pai->pai->cor = Vermelho;
                 rotacionarEsquerda(arvore, no->pai->pai);
             }
         }
     }
-    // Caso 1 — garante que a raiz seja sempre Preta
     arvore->raiz->cor = Preto;
 }
 
-No *adiciona(Arvore *arvore, int valor) {
+void adiciona(Arvore *arvore, int valor) {
     No *novo = malloc(sizeof(No));
     novo->valor = valor;
-    novo->cor = Vermelho; // todo nó novo é Vermelho
+    novo->cor = Vermelho;
     novo->esquerda = arvore->nulo;
     novo->direita = arvore->nulo;
     novo->pai = arvore->nulo;
 
-    // Busca BST para encontrar a posição correta
     No *pai  = arvore->nulo;
     No *atual = arvore->raiz;
 
     while (atual != arvore->nulo) {
         pai = atual;
+        contadorRB++;                          
         if (novo->valor < atual->valor)
             atual = atual->esquerda;
         else
@@ -172,19 +152,15 @@ No *adiciona(Arvore *arvore, int valor) {
     novo->pai = pai;
 
     if (pai == arvore->nulo)
-        arvore->raiz = novo; // árvore estava vazia
+        arvore->raiz = novo;
     else if (novo->valor < pai->valor)
         pai->esquerda = novo;
     else
         pai->direita = novo;
 
     balancear(arvore, novo);
-    return novo;
 }
 
-// Funções auxiliares para remoção
-
-// Substitui a subárvore enraizada em `u` pela subárvore enraizada em `v`
 void transplantar(Arvore *arvore, No *u, No *v) {
     if (u->pai == arvore->nulo)
         arvore->raiz = v;
@@ -195,69 +171,58 @@ void transplantar(Arvore *arvore, No *u, No *v) {
     v->pai = u->pai;
 }
 
-// Retorna o nó com menor valor na subárvore enraizada em `no`
 No *minimo(Arvore *arvore, No *no) {
     while (no->esquerda != arvore->nulo)
         no = no->esquerda;
     return no;
 }
 
-// Balanceamento pós-remoção
-
 void balancear_remocao(Arvore *arvore, No *no) {
     while (no != arvore->raiz && no->cor == Preto) {
-
         if (no == no->pai->esquerda) {
             No *irmao = no->pai->direita;
-
-            // Caso 1 — irmão é Vermelho
             if (irmao->cor == Vermelho) {
-                irmao->cor      = Preto;
+                irmao->cor = Preto;
                 no->pai->cor = Vermelho;
                 rotacionarEsquerda(arvore, no->pai);
                 irmao = no->pai->direita;
             }
-            // Caso 2 — irmão e seus dois filhos são Pretos
             if (irmao->esquerda->cor == Preto && irmao->direita->cor == Preto) {
                 irmao->cor = Vermelho;
-                no      = no->pai;
+                no = no->pai;
             } else {
-                // Caso 3 — filho direito do irmão é Preto
                 if (irmao->direita->cor == Preto) {
                     irmao->esquerda->cor = Preto;
-                    irmao->cor           = Vermelho;
+                    irmao->cor = Vermelho;
                     rotacionarDireita(arvore, irmao);
                     irmao = no->pai->direita;
                 }
-                // Caso 4 — filho direito do irmão é Vermelho
-                irmao->cor           = no->pai->cor;
-                no->pai->cor      = Preto;
-                irmao->direita->cor  = Preto;
+                irmao->cor = no->pai->cor;
+                no->pai->cor = Preto;
+                irmao->direita->cor = Preto;
                 rotacionarEsquerda(arvore, no->pai);
-                no = arvore->raiz; // encerra o loop
+                no = arvore->raiz;
             }
         } else {
-            // Caso simétrico: no é filho DIREITO
             No *irmao = no->pai->esquerda;
-
             if (irmao->cor == Vermelho) {
-                irmao->cor      = Preto;
+                irmao->cor = Preto;
                 no->pai->cor = Vermelho;
                 rotacionarDireita(arvore, no->pai);
                 irmao = no->pai->esquerda;
             }
             if (irmao->direita->cor == Preto && irmao->esquerda->cor == Preto) {
                 irmao->cor = Vermelho;
-                no      = no->pai;
+                no = no->pai;
             } else {
                 if (irmao->esquerda->cor == Preto) {
                     irmao->direita->cor = Preto;
-                    irmao->cor          = Vermelho;
+                    irmao->cor = Vermelho;
                     rotacionarEsquerda(arvore, irmao);
                     irmao = no->pai->esquerda;
                 }
-                irmao->cor           = no->pai->cor;
-                no->pai->cor      = Preto;
+                irmao->cor = no->pai->cor;
+                no->pai->cor = Preto;
                 irmao->esquerda->cor = Preto;
                 rotacionarDireita(arvore, no->pai);
                 no = arvore->raiz;
@@ -267,9 +232,7 @@ void balancear_remocao(Arvore *arvore, No *no) {
     no->cor = Preto;
 }
 
-// Remoção de um nó específico
-
-void remove(Arvore *arvore, No *z) {
+void remove_no(Arvore *arvore, No *z) {
     No *y = z;
     No *x;
     Cor cor_original_y = y->cor;
@@ -281,8 +244,14 @@ void remove(Arvore *arvore, No *z) {
         x = z->esquerda;
         transplantar(arvore, z, z->esquerda);
     } else {
-        // Nó tem dois filhos: substitui pelo sucessor (mínimo da subárvore direita)
-        y = minimo(arvore, z->direita);
+        // Busca do sucessor: cada passo à esquerda é uma comparação
+        No *cur = z->direita;
+        while (cur->esquerda != arvore->nulo) {
+            contadorRB++;                      // <<< comparação de chave
+            cur = cur->esquerda;
+        }
+        y = cur;
+
         cor_original_y = y->cor;
         x = y->direita;
 
@@ -290,18 +259,17 @@ void remove(Arvore *arvore, No *z) {
             x->pai = y;
         } else {
             transplantar(arvore, y, y->direita);
-            y->direita      = z->direita;
+            y->direita = z->direita;
             y->direita->pai = y;
         }
         transplantar(arvore, z, y);
-        y->esquerda      = z->esquerda;
+        y->esquerda = z->esquerda;
         y->esquerda->pai = y;
-        y->cor           = z->cor;
+        y->cor = z->cor;
     }
 
     free(z);
 
-    // Rebalanceia apenas se um nó Preto foi removido (altura-negra comprometida)
     if (cor_original_y == Preto)
         balancear_remocao(arvore, x);
 }
@@ -309,6 +277,7 @@ void remove(Arvore *arvore, No *z) {
 No *busca(Arvore *arvore, int valor) {
     No *atual = arvore->raiz;
     while (atual != arvore->nulo) {
+        contadorRB++;                         
         if (valor == atual->valor)
             return atual;
         else if (valor < atual->valor)
@@ -316,10 +285,8 @@ No *busca(Arvore *arvore, int valor) {
         else
             atual = atual->direita;
     }
-    return NULL; // não encontrado
+    return NULL;
 }
-
-// Percurso em-ordem (exibe valores em ordem crescente)
 
 void percorrer(Arvore *arvore, No *no) {
     if (no != arvore->nulo) {
@@ -328,8 +295,6 @@ void percorrer(Arvore *arvore, No *no) {
         percorrer(arvore, no->direita);
     }
 }
-
-// Liberação de memória
 
 void liberar_nos(Arvore *arvore, No *no) {
     if (no != arvore->nulo) {
@@ -345,44 +310,43 @@ void liberar(Arvore *arvore) {
     free(arvore);
 }
 
-// main — demonstração
+typedef struct {
+    int tamanho;
+    double mediaInsercao;
+    double mediaRemocao;
+} ResultadoRB;
 
-int main(void) {
-    Arvore *arvore = cria();
+ResultadoRB insercaoRemocaoRB(int **amostra, int tamanho) {
+    totalComparacoesInsercaoRB = 0;
+    totalComparacoesRemocaoRB  = 0;
 
-    int valores[] = {10, 20, 30, 15, 5, 25, 1, 18};
-    int n = sizeof(valores) / sizeof(valores[0]);
+    for (int i = 0; i < 10; i++) {
+        Arvore *arvore = cria();
 
-    printf("=== Inserindo valores ===\n");
-    for (int i = 0; i < n; i++) {
-        adiciona(arvore, valores[i]);
-        printf("Inserido %d → em-ordem: ", valores[i]);
-        percorrer(arvore, arvore->raiz);
-        printf("\n");
+        // Inserção
+        contadorRB = 0;
+        for (int j = 0; j < tamanho; j++)
+            adiciona(arvore, amostra[i][j]);
+        totalComparacoesInsercaoRB += contadorRB;
+
+        // Remoção  
+        contadorRB = 0;
+        for (int j = 0; j < tamanho; j++) {
+            No *alvo = busca(arvore, amostra[i][j]);
+            if (alvo)
+                remove_no(arvore, alvo);
+        }
+        totalComparacoesRemocaoRB += contadorRB;
+
+        liberar(arvore);
     }
 
-    printf("\n=== Buscando 15 ===\n");
-    No *encontrado = busca(arvore, 15);
-    if (encontrado)
-        printf("Encontrado: %d\n", encontrado->valor);
-    else
-        printf("Não encontrado.\n");
+    ResultadoRB res;
+    res.tamanho = tamanho;
+    res.mediaInsercao = (double)totalComparacoesInsercaoRB / 10.0;
+    res.mediaRemocao = (double)totalComparacoesRemocaoRB  / 10.0;
 
-    printf("\n=== Removendo 20 ===\n");
-    No *para_remover = busca(arvore, 20);
-    if (para_remover) {
-        remove(arvore, para_remover);
-        printf("Após remoção, em-ordem: ");
-        percorrer(arvore, arvore->raiz);
-        printf("\n");
-    }
-
-    printf("\n=== Removendo raiz (%d) ===\n", arvore->raiz->valor);
-    remove(arvore, arvore->raiz);
-    printf("Após remoção, em-ordem: ");
-    percorrer(arvore, arvore->raiz);
-    printf("\n");
-
-    liberar(arvore);
-    return 0;
+    printf("RB -> Media Ins: %.2f | Media Rem: %.2f\n",
+           res.mediaInsercao, res.mediaRemocao);
+    return res;
 }

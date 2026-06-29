@@ -51,8 +51,8 @@ py gerar_graficos.py
 
 Após a execução, será criada uma pasta chamada graficos, contendo os arquivos:
 
-1. grafico_adicao.png
-2. grafico_remocao.png
+- grafico_adicao.png
+- grafico_remocao.png
 
 ## Resultados
 
@@ -85,8 +85,7 @@ De forma geral, o trabalho permitiu visualizar na prática como diferentes árvo
 
 ## Integrantes
 
-
-1. Guilherme Gamaliel
-2. Heitor Henrique Klein
-3. João Vitor Rulff
-4. Otávio Osni
+- Guilherme Gamaliel
+- Heitor Henrique Klein
+- João Vitor Rulff
+- Otávio Osni

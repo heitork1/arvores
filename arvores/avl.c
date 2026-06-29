@@ -280,7 +280,5 @@ ResultadoTeste insercaoRemocaoAVL(int **amostra, int tamanho)
     res.mediaInsercao = (double)totalComparacoesInsercaoAVL / 10.0;
     res.mediaRemocao = (double)totalComparacoesRemocaoAVL / 10.0;
 
-    printf("AVL -> Media Ins: %.2f | Media Rem: %.2f\n", res.mediaInsercao, res.mediaRemocao);
-
     return res;
 }
